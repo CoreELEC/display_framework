@@ -1,4 +1,7 @@
 AC_INIT([meson_display_framework], [0.1], [lingjie.li@amlogic.com])
+
+AC_CONFIG_AUX_DIR([build-aux])
+
 AM_INIT_AUTOMAKE([-Wall foreign])
 AC_PROG_CC
 AC_PROG_SED
