@@ -62,7 +62,7 @@ int main()
             printf("please input modeInfo:interlace, w, h, vrefresh\n");
             scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w, &modeInfo->h,&modeInfo->vrefresh);
             if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_CVBS) == 0) {
-                printf("\n mode：%d %d %d %d\n",modeInfo->interlace,modeInfo->h, modeInfo->h, modeInfo->vrefresh);
+                printf("\n mode：%d %d %d %d\n",modeInfo->interlace,modeInfo->w, modeInfo->h, modeInfo->vrefresh);
             }else{
                 printf("setDisplayModeFail\n");
             }
