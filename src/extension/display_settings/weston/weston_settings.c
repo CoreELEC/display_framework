@@ -91,3 +91,24 @@ int setDisplayDvMode(int dvmode,DISPLAY_CONNECTOR_TYPE connType) {
     return 0;
 }
 
+
+int getDisplayIsBestMode(int* value) {
+    return 0;
+}
+
+int setDisplayEnabled(int enabled) {
+    return 0;
+}
+
+int getDisplayEnabled(int* enabled) {
+    return 0;
+}
+
+int setDisplayScaling(int value) {
+    return 0;
+}
+
+int getDisplayScaling(int* value) {
+    return 0;
+}
+
