@@ -27,6 +27,7 @@ typedef struct _drm_helper_mode {
      uint32_t refresh;
      uint32_t flags; /* Use for support drm mode flags, eg: DRM_MODE_FLAG_INTERLACE,DRM_MODE_FLAG_DBLSCAN */
      const char* aspect_ratio;
+     bool auto_mode;
 } drm_helper_mode;
 
 typedef struct _drm_helper_rect {
@@ -49,6 +50,7 @@ typedef struct compositor_output* output_ctx;
 
 typedef int (*switch_mode)(struct compositor_output* output, drm_helper_mode* mode);
 typedef int (*force_refresh)(struct compositor_output* output);
+typedef int (*set_property)(const char *name, int value);
 
 /* create a ipc thread to handle(m_message_handle)
  * the message from client
@@ -82,6 +84,9 @@ void help_delete_connector(drmModeConnector* connector);
 void help_set_switch_mode_function(struct compositor_output* output, switch_mode fun);
 
 void help_set_force_refresh_function(force_refresh fun);
+
+/* Call it when need set property by compositor */
+void help_set_property_function(set_property fun);
 
 /*Call it when need update you prop befor atomic commit*/
 int help_atomic_req_add_prop(drmModeAtomicReq *req);

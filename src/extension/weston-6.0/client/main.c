@@ -68,7 +68,15 @@ static void list_modes(drm_client_ctx* client) {
     free_connection_list(conn);
 }
 
+static void free_property_pairs(PropertyPair* pairs, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(pairs[i].name);
+    }
+}
+
 int main(int argc, char* argv[]) {
+    PropertyPair pairs[SOME_MAX_PROPERTIES] = { 0 };
+    int num = 0;
     int ret = 0;
     drm_client_ctx* client;
     if (argc == 1) {
@@ -106,8 +114,8 @@ int main(int argc, char* argv[]) {
                     int count = 0;
                     count = sscanf(optarg, "%32[^=]=%"SCNu64, name, &value);
                     if (count == 2) {
-                        drm_help_client_set_connector_properties(client, name, value);
-                        DEBUG_INFO("Set %s = %"PRIu64, name ,value);
+                        drm_help_client_add_connector_properties(pairs, &num, name, value);
+                        printf("Set %s = %"PRIu64, name ,value);
                     } else {
                         DEBUG_INFO("Set properties format error");
                         ret = -1;
@@ -181,6 +189,11 @@ int main(int argc, char* argv[]) {
                 print_usage(argv[0]);
         }
     };
+
+    if (num > 0) {
+        set_mul_properties(client, pairs, num);
+        free_property_pairs(pairs, num);
+    }
 
     drm_help_client_destory(client);
     DEBUG_INFO("Exit client");

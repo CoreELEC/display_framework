@@ -110,6 +110,41 @@ set_properties_error:
     DEBUG_INFO("can't set properties, may be format issue");
 }
 
+void set_mul_properties(drm_client_ctx* client, PropertyPair* pairs, int count) {
+    json_object* data = json_object_new_object();
+    json_object* properties = json_object_new_object();
+    if (pairs == NULL)
+        return;
+
+    for (int i = 0; i < count; ++i) {
+        if (pairs[i].name && strlen(pairs[i].name) > 0) {
+            if (0 != json_object_object_add(properties, pairs[i].name, json_object_new_int64(pairs[i].value)))
+                goto set_properties_error;
+
+            DEBUG_INFO("add json object property: name = %s, value = %lld \n", pairs[i].name, pairs[i].value);
+        } else {
+            DEBUG_INFO("Warning: Skipping empty or NULL name for property %d\n", i);
+        }
+    }
+
+    if (0 != json_object_object_add(data, "cmd", json_object_new_string("set connector range properties")))
+         goto set_properties_error;
+
+    if (0 !=json_object_object_add(data, "value", properties))
+        goto set_properties_error;
+
+    DEBUG_INFO("Sending properties request: %s\n", json_object_to_json_string(data));
+    if (client_send_request((client_ctx*)client, data) <= 0) {
+        DEBUG_INFO("Server disconnected");
+    }
+    return;
+
+set_properties_error:
+    json_object_put(properties);
+    json_object_put(data);
+    DEBUG_INFO("can't set properties, may be format issue");
+}
+
 json_object* send_cmd_sync(drm_client_ctx* client, const char* cmd, void* opt, opt_type type) {
     json_object* data = NULL;
     json_object* reply = NULL;
@@ -243,6 +278,33 @@ void drm_help_client_switch_mode_s(drm_client_ctx* client, const char* mode_s, i
 
 void drm_help_client_set_connector_properties(drm_client_ctx* client, const char* name, uint64_t value) {
     set_properties(client, "set connector range properties", name, value);
+}
+
+void drm_help_client_add_connector_properties(PropertyPair* pairs, int* count, const char* name, uint64_t value) {
+    if (pairs == NULL || count == NULL) {
+        DEBUG_INFO("Invalid parameter \n");
+        return;
+    }
+
+    if (*count < SOME_MAX_PROPERTIES) {
+        if (name != NULL && strlen(name) > 0) {
+            pairs[*count].name = malloc(strlen(name) + 1);
+            if (pairs[*count].name == NULL) {
+                DEBUG_INFO("Failed to allocate memory for property name \n");
+                return;
+            }
+            strcpy(pairs[*count].name, name);
+            pairs[*count].value = value;
+            DEBUG_INFO("drm help client add property: value = %lld, name = %s \n", pairs[*count].value, pairs[*count].name);
+            (*count)++;
+        } else {
+            DEBUG_INFO("name == NULL or strlen(name) < 0 \n");
+            return;
+        }
+    } else {
+        DEBUG_INFO("Too many properties \n");
+        return;
+    }
 }
 
 void free_modes(drm_output_mode_list* data) {

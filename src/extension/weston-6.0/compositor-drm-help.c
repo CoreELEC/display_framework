@@ -91,6 +91,7 @@ typedef struct _compositor_interface {
     switch_mode switch_mode;
     force_refresh force_refresh;
     print_info print_info;
+    set_property set_property;
 } compositor_interface;
 
 typedef struct _compositor_output_list {
@@ -278,8 +279,20 @@ bool parse_modestring(const char* modestring, drm_helper_mode* mode) {
     char* others = NULL;
     const char* aspect_ratio = aspect_ratio_as_string[0];
     int n, k;
+    char str[32] = { 0 };
 
-    n = sscanf(modestring , "%dx%m[^@]@%d %u:%u", &width, &height_str, &refresh, &aspect_width, &aspect_height);
+
+    strcpy(str, modestring);
+    mode->auto_mode = false;
+    if (strcmp(str, "automode") == 0) {
+        mode->auto_mode = true;
+        return true;
+    }
+
+    if (strcmp(str, "dummy_l") == 0)
+        strcpy(str, "720x480@56");
+
+    n = sscanf(str, "%dx%m[^@]@%d %u:%u", &width, &height_str, &refresh, &aspect_width, &aspect_height);
     if (n == 5) {
         if (aspect_width == 4 && aspect_height == 3)
             aspect_ratio = aspect_ratio_as_string[1];
@@ -478,38 +491,23 @@ void m_message_handle(json_object* data_in, json_object** data_out) {
             uint64_t value = 0;
             json_object_object_foreach(opt , name, json_value) {
                 if (name != NULL && strlen(name) != 0) {
-                    int i;
-                    for (i = 0; i < DRM_CONNECTOR_PROPERTY__COUNT; i++) {
-                        if (0 == strcmp(connector_props[i].name, name)) {
-                            break;
-                        }
-                    }
-                    if (i < DRM_CONNECTOR_PROPERTY__COUNT) {
-                        //have this properties.
-                        connector_list* current;
-                        //get value from json value
-                        errno = 0;
-                        value = (uint64_t)json_object_get_int64(json_value);
-                        if (errno != 0) {
-                            DEBUG_INFO("Set properties[%s] with issue value", name);
-                            continue;
-                        }
-                        pthread_mutex_lock(&mutex);
-                        for_each_list(current, &global_connector_list) {
-                            if (!is_hdmi_connector(current)) {
-                                if (i == DRM_COLOR_DEPTH_CP || i == DRM_COLOR_SPACE_CP || i == DRM_CONNECTOR_PROPERTY_CP) {
-                                    continue;
-                                }
-                            }
-                            if (current->data) {
-                                current->props[i].need_change = 1;
-                                current->props[i].new_value = value;
-                            }
-                        }
-                        pthread_mutex_unlock(&mutex);
-                        DEBUG_INFO("Set properties[%s]=[%"PRIu64"] ", name, value);
-                    }
+                    value = (uint64_t)json_object_get_int64(json_value);
+                    if (g_interface.set_property)
+                        g_interface.set_property(name, value);
                 }
+            }
+            if (g_interface.force_refresh) {
+                if (g_output_list.data) {
+                    //TODO: refresh for need output only
+                    compositor_output_list* current;
+                    for_each_list(current, &g_output_list) {
+                        if (current->enable) {
+                            assert(current->data);
+                            g_interface.force_refresh(current->data);
+                        }
+                    }
+                } else if (g_output)
+                    g_interface.force_refresh(g_output);
             }
         }
     } else if (0 == strcmp("get connector range properties", cmd)) {
@@ -751,6 +749,11 @@ void help_set_force_refresh_function(force_refresh fun) {
     BEGING_EVENT;
     g_interface.force_refresh = fun;
     END_EVENT;
+}
+
+void help_set_property_function(set_property fun)
+{
+    g_interface.set_property = fun;
 }
 
 int help_atomic_req_add_prop(drmModeAtomicReq *req) {

@@ -16,6 +16,8 @@ extern "C" {
 #include <json.h>
 #include <inttypes.h>
 
+#define SOME_MAX_PROPERTIES  1024
+
 #if DEBUG
 #include <time.h>
 #define COLOR_F (getpid()%6)+1
@@ -67,6 +69,11 @@ extern "C" {
         struct _drm_connection_list* next;
     } drm_connection_list;
 
+    typedef struct {
+        char* name;
+        uint64_t value;
+    } PropertyPair;
+
     /* connect with display server which under compositor */
     drm_client_ctx* drm_help_client_create(void);
 
@@ -92,6 +99,10 @@ extern "C" {
 
     /* set connector's drm properties*/
     void drm_help_client_set_connector_properties(drm_client_ctx* client, const char* name, uint64_t value);
+
+    void drm_help_client_add_connector_properties(PropertyPair* pairs, int* count, const char* name, uint64_t value);
+
+    void set_mul_properties(drm_client_ctx* client, PropertyPair* pairs, int count);
 
     void free_modes(drm_output_mode_list* data);
 
