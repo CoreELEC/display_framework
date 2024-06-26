@@ -389,8 +389,7 @@ out:
     }
 }
 
-
-int setDisplayFracMode(int value, DISPLAY_CONNECTOR_TYPE connType) {
+int setDisplayFracRatePolicy(int value, DISPLAY_CONNECTOR_TYPE connType) {
     int ret = -1;
     int connId = -1;
     int rc = -1;
@@ -423,7 +422,6 @@ out:
     }
     return ret;
 }
-
 
 int setDisplayColorSpacedDepth(uint32_t colorDepth, ENUM_DISPLAY_COLOR_SPACE colorSpace,
                                     DISPLAY_CONNECTOR_TYPE connType) {
@@ -581,6 +579,50 @@ out:
     if (prop_name) {
         free(prop_name);
     }
+    return ret;
+}
+
+int setDisplayFracMode(DisplayModeInfo* modeInfo, int value, DISPLAY_CONNECTOR_TYPE connType) {
+    int ret = -1;
+    char modeSet[CMDBUF_SIZE] = {'\0'};
+    int count = 0;
+    int rc = -1;
+    int connId = -1;
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char* prop_name = NULL;
+    int fd = meson_open_drm();
+    if (modeInfo == NULL) {
+        ERROR("%s %d invalid parameter return",__FUNCTION__,__LINE__);
+        goto out;
+    }
+    connId = meson_drm_GetConnectorId(connType);
+    DEBUG("%s %d weston set modeInfo %dx%d%c%dhz frac rate policy %d",__FUNCTION__,__LINE__, modeInfo->w,
+    modeInfo->h, (modeInfo->interlace == 0? 'p':'i') , modeInfo->vrefresh, value);
+    if (connId > 0) {
+        prop_name = meson_drm_GetPropName(ENUM_MESON_DRM_CONNECTOR_FRAC_RATE_POLICY);
+        if (prop_name == NULL) {
+            ERROR("%s %d meson_drm_GetPropName return NULL",__FUNCTION__,__LINE__);
+            goto out;
+        }
+        DEBUG("%s %d get prop name %s",__FUNCTION__,__LINE__, prop_name);
+
+        snprintf(modeSet, sizeof(modeSet)-1, "-r \"set mode %dx%d%c@%d properties %s=%d\"", modeInfo->w, modeInfo->h,
+                   (modeInfo->interlace == 0? 'p':'i'), modeInfo->vrefresh, prop_name,value);
+        rc = wstDisplaySendMessage(modeSet,resp);
+        if (rc >= 0) {
+            ret = 0;
+        } else {
+            ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+        }
+    } else {
+        ERROR("%s %d meson_drm_GetConnectorId return fail",__FUNCTION__,__LINE__);
+    }
+out:
+    if (prop_name) {
+        free(prop_name);
+    }
+    meson_close_drm(fd);
     return ret;
 }
 

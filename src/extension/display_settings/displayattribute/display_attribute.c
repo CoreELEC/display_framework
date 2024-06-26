@@ -196,7 +196,7 @@ int getDisplayMode(DisplayModeInfo* modeInfo, DISPLAY_CONNECTOR_TYPE connType) {
         ERROR("%s %d get modeInfo fail",__FUNCTION__,__LINE__);
     }
     meson_close_drm(fd);
-    DEBUG("%s %d modeInfo: %dx%d%s%dhz",__FUNCTION__,__LINE__, modeInfo->w, modeInfo->h,
+    DEBUG("%s %d modeInfo: %s %dx%d%s%dhz",__FUNCTION__,__LINE__, modeInfo->name, modeInfo->w, modeInfo->h,
                           (modeInfo->interlace == 0 ?"p":"i"), modeInfo->vrefresh);
     return ret;
 }

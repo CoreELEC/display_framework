@@ -174,7 +174,8 @@ int getDisplayPlaneSize( int* width, int* height );
 int getDisplayPhysicalSize( int* width, int* height, DISPLAY_CONNECTOR_TYPE connType );
 int getDisplaySignalTimingInfo(uint16_t* htotal, uint16_t* vtotal, uint16_t* hstart,
                                                    uint16_t* vstart, DISPLAY_CONNECTOR_TYPE connType);
-int setDisplayFracMode(int value, DISPLAY_CONNECTOR_TYPE connType);
+int setDisplayFracRatePolicy(int value, DISPLAY_CONNECTOR_TYPE connType);
+int setDisplayFracMode(DisplayModeInfo* modeInfo, int value, DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayCvbsAVMute( );
 int setDisplayCvbsAVMute(bool mute);
 int getDisplayIsBestMode(int* value);

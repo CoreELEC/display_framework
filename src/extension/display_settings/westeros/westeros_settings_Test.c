@@ -45,7 +45,7 @@ int main()
     if (select_s == 0 && select_len == 1) {
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type  7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio"
-        " 13->scaling 14->the status of display 15->dv mode 16->cvbs video mute\n");
+        " 13->scaling 14->the status of display 15->dv mode 16->cvbs video mute 17->frac rate policy 18->fracmode\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             printf("please input modeInfo:interlace, w, h, vrefresh\n");
@@ -240,6 +240,27 @@ int main()
                     printf("\n setDisplayCvbsAVMute fail:\n");
             } else {
                 printf("\n scanf fail\n");
+            }
+        } else if (set == 17 && len == 1) {
+            printf("frac rate policy value: \n");
+            int fracrate = -1;
+            scanf("%d", &fracrate);
+            if (setDisplayFracRatePolicy(fracrate,DISPLAY_CONNECTOR_HDMIA) == 0) {
+                printf("\n setDisplayFracRatePolicy Success\n");
+            }else{
+                printf("setDisplayFracRatePolicy Fail\n");
+            }
+        } else if (set == 18 && len == 1) {
+            printf("please input modeInfo:interlace, w, h, vrefresh and frac rate policy value \n");
+            int fracrate = -1;
+            scanf("%d %d %d %d %d",&modeInfo->interlace,&modeInfo->w, &modeInfo->h,&modeInfo->vrefresh,&fracrate);
+            if (setDisplayFracMode(modeInfo, fracrate, DISPLAY_CONNECTOR_HDMIA) == 0) {
+                printf("\n modeInfo：%d %d %d %d fracrate %d\n",modeInfo->interlace,modeInfo->w, modeInfo->h, modeInfo->vrefresh,fracrate);
+            }else{
+                printf("setDisplayFracMode Fail\n");
+            }
+            if (modeInfo) {
+                free(modeInfo);
             }
         }
     }

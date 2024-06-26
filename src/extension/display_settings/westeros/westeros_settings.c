@@ -563,6 +563,62 @@ out:
     return ret;
 }
 
+int setDisplayFracRatePolicy(int value, DISPLAY_CONNECTOR_TYPE connType) {
+    int ret = -1;
+    int rc = -1;
+    int connId = -1;
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    char* prop_name = NULL;
+    char resp[OUTPUT_SIZE] = {'\0'};
+    connId = meson_drm_GetConnectorId(connType);
+    DEBUG(" %s %d westeros set frac rate policy %d connId %d connType %d",__FUNCTION__,__LINE__,
+                                               value, connId, connType);
+    if (connId > 0) {
+        prop_name = meson_drm_GetPropName(ENUM_MESON_DRM_CONNECTOR_FRAC_RATE_POLICY);
+        if (prop_name == NULL) {
+            ERROR("%s %d meson_drm_GetPropName return NULL",__FUNCTION__,__LINE__);
+            goto out;
+        }
+        DEBUG("%s %d get prop name %s",__FUNCTION__,__LINE__, prop_name);
+        snprintf(cmdBuf, sizeof(cmdBuf)-1, "set property -s %d:%s:%d", connId, prop_name, value);
+        rc = wstDisplaySendMessage(cmdBuf,resp);
+        if (rc >= 0) {
+            ret = 0;
+       } else {
+            ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+       }
+    } else {
+        ERROR("%s %d meson_drm_GetConnectorId return fail",__FUNCTION__,__LINE__);
+    }
+out:
+    if (prop_name) {
+        free(prop_name);
+    }
+    return ret;
+}
+
+int setDisplayFracMode(DisplayModeInfo* modeInfo, int value, DISPLAY_CONNECTOR_TYPE connType) {
+    int ret = -1;
+    char modeSet[CMDBUF_SIZE] = {'\0'};
+    int rc = -1;
+    char resp[OUTPUT_SIZE] = {'\0'};
+    if (modeInfo == NULL) {
+        ERROR("%s %d invalid parameter return",__FUNCTION__,__LINE__);
+        return ret;
+    }
+    DEBUG("%s %d westeros set modeInfo %dx%d%s%dhz frac rate policy %d",__FUNCTION__,__LINE__, modeInfo->w,
+                   modeInfo->h, (modeInfo->interlace == 0? "p":"i") , modeInfo->vrefresh, value);
+    snprintf(modeSet, sizeof(modeSet)-1, "set mode %dx%d%s%d -frac_mode %d", modeInfo->w, modeInfo->h,
+                             (modeInfo->interlace == 0? "p":"i"), modeInfo->vrefresh,value);
+    rc = wstDisplaySendMessage(modeSet,resp);
+    if ( rc >= 0 ) {
+        ret = 0;
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return ret;
+}
+
 int setDisplayCvbsAVMute(bool mute) {
     int ret = -1;
     int connId = -1;
