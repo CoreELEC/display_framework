@@ -702,6 +702,14 @@ int getDisplaySignalTimingInfo(uint16_t* htotal, uint16_t* vtotal, uint16_t* hst
     return ret;
 }
 
+int getDisplayHdcpTopoInfo( DISPLAY_CONNECTOR_TYPE connType ) {
+    int fd = display_meson_get_open();
+    int value = meson_drm_getHdcpTopoInfo(fd, connType);
+    meson_close_drm(fd);
+    DEBUG("%s %d get hdcp topo info: %d",__FUNCTION__,__LINE__,value);
+    return value;
+}
+
 int getDisplayCvbsAVMute( ) {
     int fd = display_meson_get_open();
     int ret = meson_drm_getCvbsAVMute(fd, MESON_CONNECTOR_CVBS );

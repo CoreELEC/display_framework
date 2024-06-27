@@ -244,7 +244,7 @@ int main()
          " 19->current aspect ratio 20->event test 21->frac rate policy 22->Supported dvmode 23->hdr supportedlist"
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size "
          " 29>physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute "
-         " 34->frac rate policy\n");
+         " 34->frac rate policy 35->hdcp topo info\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -509,6 +509,9 @@ int main()
         } else if (get == 34 && len == 1) {
             int value = getDisplayCvbsAVMute( DISPLAY_CONNECTOR_CVBS );
             printf("\n cvbs video mute:%d\n",value);
+        } else if (get == 35 && len == 1) {
+            int value = getDisplayHdcpTopoInfo(DISPLAY_CONNECTOR_HDMIA );
+            printf("\n get hdcp topo info: %d\n",value);
         }
     }
     else {

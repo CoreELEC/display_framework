@@ -180,6 +180,7 @@ int setDisplayCvbsAVMute(bool mute);
 int getDisplayIsBestMode(int* value);
 int setDisplayBackGroundColor(unsigned char red, unsigned char green, unsigned char blue,
                                                              DISPLAY_CONNECTOR_TYPE connType);
+int getDisplayHdcpTopoInfo( DISPLAY_CONNECTOR_TYPE connType );
 int setDisplayPlaneMute(unsigned int plane_type,  unsigned int plane_mute);
 int getDisplayRxSupportedHdcpVersion(DISPLAY_CONNECTOR_TYPE connType);
 
