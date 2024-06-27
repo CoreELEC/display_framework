@@ -49,26 +49,60 @@ int main()
          "19->cvbs video mute\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
-            printf("please input modeInfo:interlace, w, h, vrefresh\n");
-            scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w, &modeInfo->h,&modeInfo->vrefresh);
-            if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_HDMIA) == 0) {
-                printf("\n mode：%d %d %d %d\n",modeInfo->interlace,modeInfo->w, modeInfo->h, modeInfo->vrefresh);
-            }else{
-                printf("setDisplayModeFail\n");
-            }
-            if (modeInfo) {
-                free(modeInfo);
+            int len = 0;
+            printf("Parameter input no modename please first input 0 \n");
+            printf("Parameter input Have modename please first input 1\n");
+            scanf("%d",&len);
+            if (len == 0) {
+                printf("please input modeInfo:interlace, w, h, vrefresh\n");
+                scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh);
+                printf("modeInfo: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                       modeInfo->vrefresh);
+                if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_HDMIA) == 0) {
+                    printf("mode: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+                } else{
+                    printf("setDisplayModeFail\n");
+                }
+            } else if (len == 1) {
+                printf("please input modeInfo:interlace, w, h, vrefresh, modename\n");
+                scanf("%d %d %d %d %s",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh,modeInfo->name);
+                printf("modeInfo: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                       modeInfo->vrefresh);
+                if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_HDMIA) == 0) {
+                    printf("mode: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+                } else{
+                    printf("setDisplayModeFail\n");
+                }
+            } else {
+                printf("input error\n");
             }
         } else if(set == 1 && len == 1){
-            printf("please input modeInfo:interlace, w, h, vrefresh\n");
-            scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w, &modeInfo->h,&modeInfo->vrefresh);
-            if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_CVBS) == 0) {
-                printf("\n mode：%d %d %d %d\n",modeInfo->interlace,modeInfo->w, modeInfo->h, modeInfo->vrefresh);
-            }else{
-                printf("setDisplayModeFail\n");
-            }
-            if (modeInfo) {
-                free(modeInfo);
+            int len = 0;
+            printf("Parameter input no modename please first input 0 \n");
+            printf("Parameter input Have modename please first input 1\n");
+            scanf("%d",&len);
+            if (len == 0) {
+                printf("please input modeInfo:interlace, w, h, vrefresh\n");
+                scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh);
+                printf("modeInfo: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                       modeInfo->vrefresh);
+                if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_CVBS) == 0) {
+                    printf("mode: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+                } else{
+                    printf("setDisplayModeFail\n");
+                }
+            } else if (len == 1) {
+                printf("please input modeInfo:interlace, w, h, vrefresh, modename\n");
+                scanf("%d %d %d %d %s",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh,modeInfo->name);
+                printf("modeInfo: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                       modeInfo->vrefresh);
+                if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_CVBS) == 0) {
+                    printf("mode: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+                } else{
+                    printf("setDisplayModeFail\n");
+                }
+            } else {
+                printf("input error\n");
             }
         } else if (set == 2 && len == 1) {
             /*
@@ -177,16 +211,33 @@ int main()
             printf("scanf fail\n");
         }
     } else if (set == 11 && len == 1) {
-            printf("please input dummy modeInfo:interlace, w, h, vrefresh\n");
-            scanf("%d %d %d %d", &modeInfo->interlace, &modeInfo->w, &modeInfo->h,&modeInfo->vrefresh);
-            if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_DUMMY) == 0) {
-                printf("\n mode：%d %d %d %d\n",modeInfo->interlace,modeInfo->w, modeInfo->h, modeInfo->vrefresh);
-            }else{
-                printf("setModeFail\n");
-            }
-            if (modeInfo) {
-                free(modeInfo);
-            }
+            int len = 0;
+           printf("Parameter input no modename please first input 0 \n");
+           printf("Parameter input Have modename please first input 1\n");
+           scanf("%d",&len);
+           if (len == 0) {
+               printf("please input modeInfo:interlace, w, h, vrefresh\n");
+               scanf("%d %d %d %d",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh);
+               printf("modeInfo: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                      modeInfo->vrefresh);
+               if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_DUMMY) == 0) {
+                   printf("mode: %d %d %d %d\n",modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+               } else{
+                   printf("setDisplayModeFail\n");
+               }
+           } else if (len == 1) {
+               printf("please input modeInfo:interlace, w, h, vrefresh, modename\n");
+               scanf("%d %d %d %d %s",&modeInfo->interlace,&modeInfo->w,&modeInfo->h,&modeInfo->vrefresh,modeInfo->name);
+               printf("modeInfo: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,
+                                      modeInfo->vrefresh);
+               if (setDisplayMode(modeInfo, DISPLAY_CONNECTOR_DUMMY) == 0) {
+                   printf("mode: %s %d %d %d %d\n",modeInfo->name,modeInfo->interlace,modeInfo->w,modeInfo->h,modeInfo->vrefresh);
+               } else{
+                   printf("setDisplayModeFail\n");
+               }
+           } else {
+                printf("input error\n");
+           }
     } else if (set == 12 && len == 1 ) {
             printf("\n aspect ratio:\n");
             int ASPECTRATIO =-1;

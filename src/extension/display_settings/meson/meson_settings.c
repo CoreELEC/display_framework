@@ -365,8 +365,8 @@ int setDisplayMode(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType) {
     int fd = 0;
     int retries = 0;
     drmModeAtomicReq *req = NULL;
-    DEBUG("%s %d set modeInfo %dx%d%s%dhz",__FUNCTION__,__LINE__, modeInfo->w, modeInfo->h,
-                               (modeInfo->interlace == 0? "p":"i") , modeInfo->vrefresh);
+    DEBUG("%s %d set modeInfo %s %dx%d%s%dhz",__FUNCTION__,__LINE__, modeInfo->name, modeInfo->w,
+           modeInfo->h, (modeInfo->interlace == 0? "p":"i") , modeInfo->vrefresh);
     if (modeInfo == NULL) {
         ERROR("%s %d invalid parameter return",__FUNCTION__,__LINE__);
         return ret;
