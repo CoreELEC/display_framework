@@ -168,7 +168,7 @@ int getDisplaySupportedDvMode(DISPLAY_CONNECTOR_TYPE connType);
 uint32_t getDisplayHDRSupportList(DISPLAY_CONNECTOR_TYPE connType);
 uint32_t getDisplayDvCap(DISPLAY_CONNECTOR_TYPE connType);
 uint32_t getDisplayRxSupportHdrList(DISPLAY_CONNECTOR_TYPE connType);
-int getDisplaySupportAttrList(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType);
+char* getDisplayModeSupportAttrList(char* modeName,DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayDpmsStatus(DISPLAY_CONNECTOR_TYPE connType);
 float getDisplayFrameRate( DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayPlaneSize( int* width, int* height );
@@ -191,6 +191,8 @@ int setDisplayPlaneMute(unsigned int plane_type,  unsigned int plane_mute);
 int getDisplayRxSupportedHdcpVersion(DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayAutoFrmMode(int* value);
 int setDisplayAutoFrmMode(int value);
+int setDisplayHdrPriority(int value);
+int getDisplayHdrPriority(int* value);
 
 int display_meson_get_open();
 int display_meson_set_open();

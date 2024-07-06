@@ -522,71 +522,52 @@ int getDisplayFracRatePolicy(DISPLAY_CONNECTOR_TYPE connType ) {
     return ret;
 }
 
-int getDisplaySupportAttrList(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType) {
+char* getDisplayModeSupportAttrList(char* modeName,DISPLAY_CONNECTOR_TYPE connType) {
     char attr[32] = {'\0'};
-    char array[215][255] = {{'\0'}};
-    int  index = 0;
+    char buffer[215] = {'\0'};
+    int index = 0;
+    bool hdrStatus = false;
     char color[5] = {'\0'};
     int supportedcheck = -1;
-    int ret = -1;
-    int ColorDepth = 0;
-    drmModeAtomicReq *req = NULL;
-    if (modeInfo == NULL) {
-        ERROR("%s %d invalid parameter return",__FUNCTION__,__LINE__);
-        return ret;
-    }
     int fd = display_meson_get_open();
-    ret = meson_drm_getModeInfo(fd, connType, modeInfo);
-    if (ret == -1) {
-        ERROR("%s %d get modeInfo fail",__FUNCTION__,__LINE__);
-        return ret;
+    ENUM_DISPLAY_HDR_MODE displayHdrMode = getDisplayHdrStatus(connType);
+    if (displayHdrMode == MESON_DISPLAY_HDR10PLUS || displayHdrMode == MESON_DISPLAY_HDR10_ST2084 ||
+                 displayHdrMode == MESON_DISPLAY_HDR10_TRADITIONAL ||displayHdrMode == MESON_DISPLAY_HDR_HLG) {
+        hdrStatus = true;
     }
-    DEBUG("%s %d modeInfoName %s",__FUNCTION__,__LINE__, modeInfo->name);
+    DEBUG("%s %d current modeName: %s hdrStatus: %d",__FUNCTION__,__LINE__, modeName, hdrStatus);
     for (int ColorSpace = 0; ColorSpace < DISPLAY_COLOR_SPACE_RESERVED; ColorSpace++) {
         for (int colordepth = 0; colordepth < 3; colordepth++) {
-            switch ( colordepth ) {
-                case 0:
-                    ColorDepth = 8;
+            if ((ColorSpace == 1 && (colordepth == 0 || colordepth == 1))) {
+                continue;
+            }
+            int ColorDepth = (colordepth == 0) ? 8 : (colordepth == 1) ? 10 : 12;
+            if (hdrStatus && ColorDepth == 8) {
+                continue;
+            }
+            supportedcheck = modeAttrSupportedCheck(modeName, ColorSpace, ColorDepth, connType);
+            if (supportedcheck == 1) {
+                strncpy(color, (ColorSpace == 0) ? "rgb" : (ColorSpace == 1) ? "422" : (ColorSpace == 2) ? "444" : "420", sizeof(color));
+                snprintf(attr, sizeof(attr) - 1, "%s,%dbit", color, ColorDepth);
+                strcpy(buffer + index, attr);
+                index += strlen(attr);
+                if (index < sizeof(buffer) - 1) {
+                    buffer[index++] = ' ';
+                } else {
+                    ERROR("%s %d Error: Not enough space in buffer\n",__FUNCTION__,__LINE__);
                     break;
-                case 1:
-                    ColorDepth = 10;
-                    break;
-                case 2:
-                    ColorDepth = 12;
-                    break;
-                default:
-                    break;
-             }
-             supportedcheck = modeAttrSupportedCheck(modeInfo->name,ColorSpace,ColorDepth,connType );
-             if (supportedcheck == 1) {
-                 switch ( ColorSpace ) {
-                     case 0:
-                         sprintf(color, "rgb");
-                         break;
-                     case 1:
-                         sprintf(color, "422");
-                         break;
-                     case 2:
-                         sprintf(color, "444");
-                         break;
-                     case 3:
-                         sprintf(color, "420");
-                         break;
-                     default:
-                         break;
-             }
-             snprintf(attr, sizeof(attr)-1, "%s,%dbit", color, ColorDepth);
-             strcpy(array[index++], attr);
-             ret = 0;
+                }
             }
         }
     }
-    DEBUG("%s %d attr list count: %d",__FUNCTION__,__LINE__,index);
-    for (int i = 0; i < index; i++) {
-        DEBUG_EDID("%s\n",array[i]);
+    buffer[index] = '\0';
+    int len = strlen(buffer) + 1;
+    char* new_str = (char*)malloc(len * sizeof(char));
+    if (new_str == NULL) {
+        return NULL;
     }
-    meson_close_drm(fd);
-    return ret;
+    strncpy(new_str, buffer, len);
+    return new_str;
 }
 
 int getDisplaySupportedDvMode( DISPLAY_CONNECTOR_TYPE connType ) {

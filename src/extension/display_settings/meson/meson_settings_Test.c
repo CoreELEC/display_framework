@@ -154,16 +154,16 @@ int main()
                     printf("\n scanf fail\n");
                 }
         } else if (set == 5 && len == 1) {
-                uint32_t colorSpace = 0;
-                uint32_t colorDepth = 0;
-                printf("\n Please set <colorDepth, colorSpace> property value:\n");
-                scanf("%d %d", &colorDepth,&colorSpace);
-                int ret = setDisplayColorSpacedDepth(colorDepth, colorSpace, DISPLAY_CONNECTOR_HDMIA);
-                if (ret == 0) {
-                    printf("\n set <colorDepth, colorSpace> Success!\n");
-                } else {
-                    printf("\n set value Fail!\n");
-                }
+            uint32_t colorSpace = 0;
+            uint32_t colorDepth = 0;
+            printf("\n Please set <colorDepth, colorSpace> property value:\n");
+            scanf("%d %d", &colorDepth,&colorSpace);
+            int ret = setDisplayColorSpacedDepth(colorDepth, colorSpace, DISPLAY_CONNECTOR_HDMIA);
+            if (ret == 0) {
+                printf("\n set <colorDepth, colorSpace> Success!\n");
+            } else {
+                printf("\n set value Fail!\n");
+            }
         } else if (set == 6 && len == 1) {
             printf("\n HDCP Content Type:\n");
             int HDCPContentType = 0;
@@ -566,14 +566,23 @@ int main()
             int value = getDisplayDpmsStatus( DISPLAY_CONNECTOR_HDMIA );
             printf("\n get dpms status: %d\n",value);
         } else if(get == 26 && len == 1) {
-            int num = getDisplaySupportAttrList( modeInfo, DISPLAY_CONNECTOR_HDMIA);
-            if (num == 0) {
-                printf("\n getDisplaySupportAttrList Success");
+            char mode[32] = {'\0'};
+            printf("\n please input mode name:\n");
+            scanf("%s", mode);
+            printf("\n mode: %s\n",mode);
+            char* attrs = getDisplayModeSupportAttrList(mode, DISPLAY_CONNECTOR_HDMIA);
+            if (attrs) {
+                printf("%s\n", attrs);
+                printf("get current mode support attribute list:\n");
+                char* token = strtok(attrs, " ");
+                while (token != NULL) {
+                    printf("%s\n", token);
+                    token = strtok(NULL, " ");
+                }
+                free(attrs);
             } else {
-                printf("\n getDisplaySupportAttrList Fail");
+                printf("Failed to get attribute list.");
             }
-            if (modeInfo)
-                free(modeInfo);
         } else if(get == 27 && len == 1) {
             //name：FRAC_RATE_POLICY value：0 整数mode， value：1 小数mode , 大部分情况下默认开机是小数
             float value = getDisplayFrameRate(DISPLAY_CONNECTOR_HDMIA);

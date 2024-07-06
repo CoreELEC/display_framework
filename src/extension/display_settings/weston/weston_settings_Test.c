@@ -46,7 +46,7 @@ int main()
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type 7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio 13->mode attr"
         "14->dv mode 15->cvbs video mute 16->frac rate policy 17->scaling 18->auto-frm-mode 19->frac mode 20->the status of display"
-        "21->allm\n");
+        "21->allm 22->hdr_priority\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             printf("please input modeInfo: interlace, w, h, vrefresh\n");
@@ -286,6 +286,15 @@ int main()
             } else {
                     printf("\n scanf fail\n");
             }
+        } else if (set == 22 && len == 1) {
+            printf("please enter hdr_priority value: \n");
+            int enable = -1;
+            scanf("%d", &enable);
+            if (setDisplayHdrPriority(enable) == 0) {
+                printf("\n setDisplayHdrPriority Success\n");
+            }else{
+                printf("setDisplayHdrPriority Fail\n");
+            }
         }
     }
     else if(select_s == 1 && select_len == 1) {
@@ -296,7 +305,7 @@ int main()
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size "
          " 29>physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute "
          " 34->frac rate policy 35->hdcp topo info 36->scaling 37->auto-frm-mode 38->display enabled 39->is bestmode"
-         " 40->Rx supported hdr list 41->allm 42->vrr_capable\n");
+         " 40->Rx supported hdr list 41->allm 42->vrr_capable 43->hdr_priority\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -494,14 +503,23 @@ int main()
             int value = getDisplayDpmsStatus( DISPLAY_CONNECTOR_HDMIA );
             printf("\n get dpms status: %d\n",value);
         } else if(get == 26 && len == 1) {
-            int num = getDisplaySupportAttrList( modeInfo, DISPLAY_CONNECTOR_HDMIA);
-            if (num == 0) {
-                printf("\n getDisplaySupportAttrList Success");
+            char mode[32] = {'\0'};
+            printf("\n please input mode name:\n");
+            scanf("%s", mode);
+            printf("\n mode: %s\n",mode);
+            char* attrs = getDisplayModeSupportAttrList(mode,DISPLAY_CONNECTOR_HDMIA);
+            if (attrs) {
+                printf("%s\n", attrs);
+                printf("get current mode support attribute list: \n");
+                char* token = strtok(attrs, " ");
+                while (token != NULL) {
+                    printf("%s\n", token);
+                    token = strtok(NULL, " ");
+                }
+                free(attrs);
             } else {
-                printf("\n getDisplaySupportAttrList Fail");
+                printf("Failed to get attribute list.");
             }
-            if (modeInfo)
-                free(modeInfo);
         } else if(get == 27 && len == 1) {
             float value = getDisplayFrameRate( DISPLAY_CONNECTOR_HDMIA);
             printf("\n get framrate %.2f",value);
@@ -621,6 +639,13 @@ int main()
         } else if (get == 42 && len == 1) {
             int value = getDisplayVrrCapable( DISPLAY_CONNECTOR_HDMIA);
             printf("\n VrrCapable value: %d\n",value);
+        }  else if (get == 43 && len == 1) {
+            int enabled = 0;
+            if (getDisplayHdrPriority(&enabled)< 0) {
+                printf("send message fail, cause get the status of display fail\n");
+            } else {
+                printf("get hdr_priority value %d\n",enabled);
+            }
         }
     }
     else {
