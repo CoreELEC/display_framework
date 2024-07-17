@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
                 break;
 
             case 'r':
-                if (strcmp("get ", optarg) == 0) {
+                if (strncmp("get", optarg, 3) == 0) {
                     reply = send_cmd_sync(client, optarg, NULL, OPT_TYPE_NULL);
                     if (reply != NULL) {
                         printf("%s\n", json_object_to_json_string(reply));

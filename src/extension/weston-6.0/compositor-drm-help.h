@@ -51,6 +51,7 @@ typedef struct compositor_output* output_ctx;
 typedef int (*switch_mode)(struct compositor_output* output, drm_helper_mode* mode);
 typedef int (*force_refresh)(struct compositor_output* output);
 typedef int (*set_property)(const char *name, int value);
+typedef char *(*execute_command)(char *cmd);
 
 /* create a ipc thread to handle(m_message_handle)
  * the message from client
@@ -87,6 +88,9 @@ void help_set_force_refresh_function(force_refresh fun);
 
 /* Call it when need set property by compositor */
 void help_set_property_function(set_property fun);
+
+/* Call it when need execute command */
+void help_set_execute_command_function(execute_command fun);
 
 /*Call it when need update you prop befor atomic commit*/
 int help_atomic_req_add_prop(drmModeAtomicReq *req);

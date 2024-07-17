@@ -584,7 +584,18 @@ int getDisplayIsBestMode(int* value) {
 }
 
 int setDisplayEnabled(int enabled) {
-    return 0;
+    int ret = -1;
+    int rc = -1;
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+
+    snprintf(cmdBuf, sizeof(cmdBuf) - 1, "-r \"set display enable %d\"", enabled);
+    rc = wstDisplaySendMessage(cmdBuf);
+    if (rc >= 0) {
+        ret = 0;
+    } else {
+        ERROR("%s %d send message fail", __FUNCTION__, __LINE__);
+    }
+    return ret;
 }
 
 int getDisplayEnabled(int* enabled) {

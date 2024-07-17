@@ -92,6 +92,7 @@ typedef struct _compositor_interface {
     force_refresh force_refresh;
     print_info print_info;
     set_property set_property;
+    execute_command execute_command;
 } compositor_interface;
 
 typedef struct _compositor_output_list {
@@ -591,6 +592,17 @@ void m_message_handle(json_object* data_in, json_object** data_out) {
         if (errno != 0)
             DEBUG_INFO("get nframes error:%d", errno);
         g_interface.print_info(g_compositor, nframes);
+    } else if (0 == strncmp("get", cmd, 3)) {
+        *data_out = json_object_new_object();
+        pthread_rwlock_rdlock(&info_rwlock);
+        ret |= json_object_object_add(*data_out, "response", json_object_new_string(g_interface.execute_command(cmd)));
+        pthread_rwlock_unlock(&info_rwlock);
+        if (ret != 0) {
+            DEBUG_INFO("get with error");
+        }
+    } else if (0 == strncmp("set", cmd, 3)) {
+        if (g_interface.execute_command)
+            g_interface.execute_command(cmd);
     }
     json_object_put(data_in);
     if (ret != 0) {
@@ -754,6 +766,11 @@ void help_set_force_refresh_function(force_refresh fun) {
 void help_set_property_function(set_property fun)
 {
     g_interface.set_property = fun;
+}
+
+void help_set_execute_command_function(execute_command fun)
+{
+    g_interface.execute_command = fun;
 }
 
 int help_atomic_req_add_prop(drmModeAtomicReq *req) {
