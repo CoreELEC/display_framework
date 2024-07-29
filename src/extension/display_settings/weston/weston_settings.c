@@ -544,7 +544,6 @@ int setDisplayAutoMode(DISPLAY_CONNECTOR_TYPE connType) {
     } else {
         ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
     }
-
     return ret;
 }
 
@@ -632,7 +631,22 @@ int setDisplayModeAttr(DisplayModeInfo* modeInfo,uint32_t colorDepth,
 }
 
 int getDisplayIsBestMode(int* value) {
-    return 0;
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    int rc = -1;
+    if (value == NULL) {
+        ERROR("%s %d Error: pointers are NULL.\n",__FUNCTION__,__LINE__);
+        return rc;
+    }
+    snprintf(cmdBuf, sizeof(cmdBuf)-1, "-r \"get bestmode\"");
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+        *value = getValueFromOutputString(resp, "bestmode");
+        DEBUG("%s %d get is bestmode status %d",__FUNCTION__,__LINE__,*value);
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return rc;
 }
 
 int setDisplayEnabled(int enabled) {
@@ -652,7 +666,22 @@ int setDisplayEnabled(int enabled) {
 }
 
 int getDisplayEnabled(int* enabled) {
-    return 0;
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    int rc = -1;
+    if (enabled == NULL) {
+        ERROR("%s %d Error: pointers are NULL.\n",__FUNCTION__,__LINE__);
+        return rc;
+    }
+    snprintf(cmdBuf, sizeof(cmdBuf)-1, "-r \"get display enable\"");
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+        *enabled = getValueFromOutputString(resp, "enable");
+        DEBUG("%s %d get the status of display %d",__FUNCTION__,__LINE__,*enabled);
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return rc;
 }
 
 int getDisplayScaling(int* value) {
@@ -727,4 +756,3 @@ int setDisplayScaling(int value) {
     }
     return ret;
 }
-

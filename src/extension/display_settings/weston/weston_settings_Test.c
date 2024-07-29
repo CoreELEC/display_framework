@@ -45,7 +45,7 @@ int main()
     if (select_s == 0 && select_len == 1) {
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type 7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio 13->mode attr"
-        "14->dv mode 15->cvbs video mute 16->frac rate policy 17->scaling 18->auto-frm-mode 19->frac mode\n");
+        "14->dv mode 15->cvbs video mute 16->frac rate policy 17->scaling 18->auto-frm-mode 19->frac mode 20->the status of display\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             printf("please input modeInfo: interlace, w, h, vrefresh\n");
@@ -236,7 +236,7 @@ int main()
                 printf("setDisplayFracRatePolicy Fail\n");
             }
         } else if (set == 17 && len == 1) {
-            printf("please input value(value must be greater than 60 and less than or equal to 100 (percent)): \n");
+            printf("please input value(value must be greater than 40 and less than or equal to 100 (percent)): \n");
             int value = -1;
             scanf("%d", &value);
             if (setDisplayScaling(value) == 0) {
@@ -266,6 +266,15 @@ int main()
             if (modeInfo) {
                 free(modeInfo);
             }
+        } else if (set == 20 && len == 1) {
+            printf("display enable: \n");
+            int enable = -1;
+            scanf("%d", &enable);
+            if (setDisplayEnabled(enable) == 0) {
+                printf("\n setDisplayEnabled Success\n");
+            }else{
+                printf("setDisplayEnabled Fail\n");
+            }
         }
     }
     else if(select_s == 1 && select_len == 1) {
@@ -275,7 +284,7 @@ int main()
          " 19->current aspect ratio 20->event test 21->frac rate policy 22->Supported dvmode 23->hdr supportedlist"
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size "
          " 29>physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute "
-         " 34->frac rate policy 35->hdcp topo info 36->scaling 37->auto-frm-mode\n");
+         " 34->frac rate policy 35->hdcp topo info 36->scaling 37->auto-frm-mode 38->display enabled 39->is bestmode\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -556,6 +565,26 @@ int main()
                printf("\n send message fail, cause get get auto-frm-mode fail\n");
             } else {
                printf("\n get auto-frm-mode %d\n",value);
+            }
+        } else if (get == 38 && len == 1) {
+            int enabled = 0;
+            if (getDisplayEnabled(&enabled)< 0) {
+                printf("send message fail, cause get the status of display fail\n");
+            } else {
+                printf("get the status of display %d\n",enabled);
+            }
+        } else if (get == 39 && len == 1) {
+            /*The return value of 1 indicates is.bestmode */
+            /*The return value of 0 indicates not bestmode */
+            int value = -1;
+            if (getDisplayIsBestMode(&value) < 0) {
+               printf("\n send message fail, cause get fail\n");
+            } else {
+               if (value == 1) {
+                   printf("\n get best mode status value %d (is.bestmode is true)\n",value);
+               } else if (value == 0) {
+                   printf("\n get best mode status value %d (is.bestmode: false)\n",value);
+               }
             }
         }
     }
