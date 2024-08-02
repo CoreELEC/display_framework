@@ -228,6 +228,7 @@ ENUM_DISPLAY_HDR_POLICY getDisplayHDRPolicy(DISPLAY_CONNECTOR_TYPE connType) {
     return displayHdrPolicy;
 }
 
+#define MAX_AREA (3840 * 2160)
 int getDisplayModesList(DisplayModeInfo** modeInfo, int* modeCount,DISPLAY_CONNECTOR_TYPE connType) {
     int ret = -1;
     if (modeInfo == NULL || modeCount == NULL) {
@@ -240,10 +241,25 @@ int getDisplayModesList(DisplayModeInfo** modeInfo, int* modeCount,DISPLAY_CONNE
         ERROR("%s %d get supported modeslist failed: ret %d errno %d",__FUNCTION__,__LINE__, ret, errno );
     }
     meson_close_drm(fd);
-    DEBUG("%s %d mode count: %d",__FUNCTION__,__LINE__,(*modeCount));
+
+    DisplayModeInfo *newModeInfo = (DisplayModeInfo *)malloc(*modeCount * sizeof(DisplayModeInfo));
+    int newIndex = 0;
+    for (int i=0; i < (*modeCount); i++) {
+        int area = (*modeInfo)[i].w * (*modeInfo)[i].h;
+        if (area <= MAX_AREA) {
+            newModeInfo[newIndex++] = (*modeInfo)[i];
+        } else {
+            DEBUG_EDID("Skipping mode %s %dx%d%s%dhz\n", (*modeInfo)[i].name, (*modeInfo)[i].w,
+             (*modeInfo)[i].h, ((*modeInfo)[i].interlace == 0 ? "p" : "i"), (*modeInfo)[i].vrefresh);
+        }
+    }
+    free(*modeInfo);
+    *modeInfo = newModeInfo;
+    *modeCount = newIndex;
+    DEBUG("%s %d mode count: %d",__FUNCTION__, __LINE__,(*modeCount));
     for (int i=0; i < (*modeCount); i++) {
         DEBUG_EDID(" %s %dx%d%s%dhz\n", (*modeInfo)[i].name, (*modeInfo)[i].w, (*modeInfo)[i].h,
-                            ((*modeInfo)[i].interlace == 0? "p":"i"), (*modeInfo)[i].vrefresh);
+                    ((*modeInfo)[i].interlace == 0? "p":"i"), (*modeInfo)[i].vrefresh);
     }
     return ret;
 }
