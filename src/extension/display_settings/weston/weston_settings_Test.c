@@ -45,7 +45,7 @@ int main()
     if (select_s == 0 && select_len == 1) {
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type 7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio 13->mode attr"
-        "14->dv mode 15->cvbs video mute 16->frac rate policy\n");
+        "14->dv mode 15->cvbs video mute 16->frac rate policy 17->scaling\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             printf("please input modeInfo: interlace, w, h, vrefresh\n");
@@ -235,6 +235,15 @@ int main()
             }else{
                 printf("setDisplayFracMode Fail\n");
             }
+        } else if (set == 17 && len == 1) {
+            printf("please input value(value must be greater than 60 and less than or equal to 100 (percent)): \n");
+            int value = -1;
+            scanf("%d", &value);
+            if (setDisplayScaling(value) == 0) {
+                printf("\n setDisplayScaling Success\n");
+            }else{
+                printf("setDisplayScaling Fail\n");
+            }
         }
     }
     else if(select_s == 1 && select_len == 1) {
@@ -244,7 +253,7 @@ int main()
          " 19->current aspect ratio 20->event test 21->frac rate policy 22->Supported dvmode 23->hdr supportedlist"
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size "
          " 29>physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute "
-         " 34->frac rate policy 35->hdcp topo info\n");
+         " 34->frac rate policy 35->hdcp topo info 36->scaling\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -512,6 +521,13 @@ int main()
         } else if (get == 35 && len == 1) {
             int value = getDisplayHdcpTopoInfo(DISPLAY_CONNECTOR_HDMIA );
             printf("\n get hdcp topo info: %d\n",value);
+        } else if (get == 36 && len == 1) {
+            int value = 0;
+            if (getDisplayScaling(&value) < 0) {
+               printf("\n send message fail, cause get the scaling of graphic fail\n");
+            } else {
+               printf("\n get the scaling of graphic %d\n",value);
+            }
         }
     }
     else {
