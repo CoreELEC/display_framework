@@ -632,6 +632,41 @@ int getDisplayScaling(int* value) {
     return rc;
 }
 
+int getDisplayAutoFrmMode(int* value) {
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    int rc = -1;
+    if (value == NULL) {
+        ERROR("%s %d Error: pointers are NULL.\n",__FUNCTION__,__LINE__);
+        return rc;
+    }
+    snprintf(cmdBuf, sizeof(cmdBuf)-1, "-r \"get auto-frm-mode\"");
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+        *value = getValueFromOutputString(resp, "auto-frm-mode");
+        DEBUG("%s %d get auto-frm-mode %d",__FUNCTION__,__LINE__,*value);
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return rc;
+}
+
+int setDisplayAutoFrmMode(int value) {
+    int ret = -1;
+    int rc = -1;
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    DEBUG("%s %d weston set auto-frm-mode %d",__FUNCTION__,__LINE__, value);
+    snprintf(cmdBuf, sizeof(cmdBuf)-1, "-r \"set auto-frm-mode %d\"",value);
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+          ret = 0;
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return ret;
+}
+
 int setDisplayScaling(int value) {
     int ret = -1;
     int rc = -1;

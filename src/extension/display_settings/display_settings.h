@@ -183,6 +183,8 @@ int setDisplayBackGroundColor(unsigned char red, unsigned char green, unsigned c
 int getDisplayHdcpTopoInfo( DISPLAY_CONNECTOR_TYPE connType );
 int setDisplayPlaneMute(unsigned int plane_type,  unsigned int plane_mute);
 int getDisplayRxSupportedHdcpVersion(DISPLAY_CONNECTOR_TYPE connType);
+int getDisplayAutoFrmMode(int* value);
+int setDisplayAutoFrmMode(int value);
 
 int display_meson_get_open();
 int display_meson_set_open();
