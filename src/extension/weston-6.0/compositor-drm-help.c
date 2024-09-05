@@ -595,7 +595,10 @@ void m_message_handle(json_object* data_in, json_object** data_out) {
     } else if (0 == strncmp("get", cmd, 3)) {
         *data_out = json_object_new_object();
         pthread_rwlock_rdlock(&info_rwlock);
-        ret |= json_object_object_add(*data_out, "response", json_object_new_string(g_interface.execute_command(cmd)));
+        if (g_interface.execute_command) {
+            char *value = g_interface.execute_command(cmd);
+            ret |= json_object_object_add(*data_out, "response", json_object_new_string(value));
+        }
         pthread_rwlock_unlock(&info_rwlock);
         if (ret != 0) {
             DEBUG_INFO("get with error");
