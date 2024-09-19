@@ -167,6 +167,7 @@ int getDisplayDvMode(DISPLAY_CONNECTOR_TYPE connType );
 int getDisplaySupportedDvMode(DISPLAY_CONNECTOR_TYPE connType);
 uint32_t getDisplayHDRSupportList(DISPLAY_CONNECTOR_TYPE connType);
 uint32_t getDisplayDvCap(DISPLAY_CONNECTOR_TYPE connType);
+uint32_t getDisplayRxSupportHdrList(DISPLAY_CONNECTOR_TYPE connType);
 int getDisplaySupportAttrList(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayDpmsStatus(DISPLAY_CONNECTOR_TYPE connType);
 float getDisplayFrameRate( DISPLAY_CONNECTOR_TYPE connType);

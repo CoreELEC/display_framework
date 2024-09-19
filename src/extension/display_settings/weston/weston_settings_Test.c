@@ -284,7 +284,8 @@ int main()
          " 19->current aspect ratio 20->event test 21->frac rate policy 22->Supported dvmode 23->hdr supportedlist"
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size "
          " 29>physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute "
-         " 34->frac rate policy 35->hdcp topo info 36->scaling 37->auto-frm-mode 38->display enabled 39->is bestmode\n");
+         " 34->frac rate policy 35->hdcp topo info 36->scaling 37->auto-frm-mode 38->display enabled 39->is bestmode"
+         " 40->Rx supported hdr list\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -586,6 +587,23 @@ int main()
                    printf("\n get best mode status value %d (is.bestmode: false)\n",value);
                }
             }
+        } else if (get == 40 && len == 1) {
+            uint32_t value  = getDisplayRxSupportHdrList(DISPLAY_CONNECTOR_HDMIA);
+            printf("\n value %d\n",value);
+            if (value & 0x1)
+                printf("\n MESON_DRM_HDR10PLUS\n");
+            if (value & 0x2)
+                printf("\n MESON_DRM_DOLBYVISION_STD\n");
+            if (value & 0x4)
+                printf("\n MESON_DRM_DOLBYVISION_LL\n");
+            if (value & 0x8)
+                printf("\n MESON_DRM_HDR10_ST2084\n");
+            if (value & 0x10)
+                printf("\n MESON_DRM_HDR10_TRADITIONAL\n");
+            if (value & 0x20)
+                printf("\n MESON_DRM_HDR_HLG\n");
+            if (value & 0x40)
+                printf("\n MESON_DRM_SDR\n");
         }
     }
     else {

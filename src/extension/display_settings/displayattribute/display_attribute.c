@@ -30,6 +30,7 @@
 #define MESON_DISPLAY_DV_MODE_FLAG 0xf8
 
 static uint32_t getDisplayHDRSupportedList(uint64_t hdrlist, uint64_t dvlist);
+static uint32_t getDisplayRxSupportedHdrList(uint32_t hdrlist, uint32_t dvlist);
 
 int display_meson_get_open() {
     int fd = -1;
@@ -716,6 +717,43 @@ int getDisplaySignalTimingInfo(uint16_t* htotal, uint16_t* vtotal, uint16_t* hst
     }
     meson_close_drm(fd);
     return ret;
+}
+
+static uint32_t getDisplayRxSupportedHdrList(uint32_t hdrlist, uint32_t dvlist) {
+    uint32_t ret = 0;
+    DEBUG("%s %d hdrlist: %d, dvlist: %d",__FUNCTION__,__LINE__, hdrlist,dvlist);
+    if (!!(hdrlist & 0x1))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_HDR10PLUS);
+
+    if (!!(dvlist & 0x1A))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_DolbyVision_STD);
+
+    if (!!(dvlist & 0xE0))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_DolbyVision_Lowlatency);
+
+    if (!!(hdrlist & 0x8))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_HDR10_ST2084);
+
+    if (!!(hdrlist & 0x4))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_HDR10_TRADITIONAL);
+
+    if (!!(hdrlist & 0x10))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_HDR_HLG);
+
+    if (!!(hdrlist & 0x2))
+        ret = ret | (0x1 << (int)MESON_DISPLAY_SDR);
+
+    return ret;
+}
+
+uint32_t getDisplayRxSupportHdrList(DISPLAY_CONNECTOR_TYPE connType) {
+    int fd = display_meson_get_open();
+    uint32_t hdrcap = meson_drm_getRxHdrCap( fd, connType );
+    uint32_t dvcap = meson_drm_getRxDvCap( fd, connType );
+    uint32_t value = getDisplayRxSupportedHdrList(hdrcap, dvcap);
+    DEBUG("%s %d get rx support hdr list %d",__FUNCTION__,__LINE__,value);
+    meson_close_drm(fd);
+    return value;
 }
 
 int getDisplayHdcpTopoInfo( DISPLAY_CONNECTOR_TYPE connType ) {
