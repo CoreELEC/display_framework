@@ -667,6 +667,9 @@ int getDisplayScaling(int* value) {
     rc = wstDisplaySendMessage(cmdBuf,resp);
     if (rc >= 0) {
         *value = getValueFromOutputString(resp, "scaling");
+         if (*value < 0) {
+             *value = 100;
+         }
         DEBUG("%s %d get the scaling of graphic value %d",__FUNCTION__,__LINE__,*value);
     } else {
         ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
