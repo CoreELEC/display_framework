@@ -817,6 +817,37 @@ int setDisplayPlaneMute(unsigned int plane_type, unsigned int plane_mute) {
     return res;
 }
 
+int setDisplayAllm(int value,DISPLAY_CONNECTOR_TYPE connType) {
+    int res = -1;
+    int ret = -1;
+    int fd = 0;
+    drmModeAtomicReq *req = NULL;
+    DEBUG("%s %d set allm value %d",__FUNCTION__,__LINE__,value);
+    fd = display_meson_set_open();
+    req = drmModeAtomicAlloc();
+    if (req == NULL) {
+        DEBUG(" %s %d invalid parameter return",__FUNCTION__,__LINE__);
+        goto out;
+    }
+    res = meson_drm_setAllm(fd, req, value, connType);
+    if (res == -1) {
+        ERROR("%s %d set allm fail",__FUNCTION__,__LINE__);
+        goto out;
+    }
+    ret = drmModeAtomicCommit(fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
+    if (ret) {
+        ERROR("%s %d drmModeAtomicCommit failed: ret %d errno %d", __FUNCTION__,__LINE__, ret, errno );
+        goto out;
+    }
+out:
+    if (req) {
+        drmModeAtomicFree(req);
+        req = NULL;
+    }
+    meson_close_drm(fd);
+    return  ret;
+}
+
 int setDisplayCvbsAVMute(bool mute) {
     int res = -1;
     int ret = -1;

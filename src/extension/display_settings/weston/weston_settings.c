@@ -741,6 +741,39 @@ int setDisplayAutoFrmMode(int value) {
     return ret;
 }
 
+int setDisplayAllm(int value, DISPLAY_CONNECTOR_TYPE connType) {
+    int ret = -1;
+    int connId = -1;
+    int rc = -1;
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    char* prop_name = NULL;
+    connId = meson_drm_GetConnectorId(connType);
+    DEBUG(" %s %d weston set allm value %d",__FUNCTION__,__LINE__,value);
+    if (connId > 0) {
+        prop_name = meson_drm_GetPropName(ENUM_MESON_DRM_CONNECTOR_ALLM);
+        if (prop_name == NULL) {
+            ERROR("%s %d meson_drm_GetPropName return NULL",__FUNCTION__,__LINE__);
+            goto out;
+        }
+        DEBUG("%s %d get prop name %s",__FUNCTION__,__LINE__, prop_name);
+        snprintf(cmdBuf, sizeof(cmdBuf)-1, "-s \"%s\"=%d", prop_name, value);
+        rc = wstDisplaySendMessage(cmdBuf,resp);
+        if (rc >= 0) {
+            ret = 0;
+        } else {
+            ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+        }
+    } else {
+        ERROR("%s %d meson_drm_GetConnectorId return fail",__FUNCTION__,__LINE__);
+    }
+out:
+    if (prop_name) {
+        free(prop_name);
+    }
+    return ret;
+}
+
 int setDisplayScaling(int value) {
     int ret = -1;
     int rc = -1;

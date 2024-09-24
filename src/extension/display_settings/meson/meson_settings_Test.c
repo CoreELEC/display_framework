@@ -46,7 +46,7 @@ int main()
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type  7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio"
          "13->mode attr 14->FunctionAttribute 15->video zorder 16->dv mode 17->plane mute 18->background color"
-         "19->cvbs video mute\n");
+         "19->cvbs video mute 20->allm\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             int len = 0;
@@ -348,6 +348,16 @@ int main()
             } else {
                 printf("\n scanf fail\n");
             }
+        } else if (set == 20 && len == 1) {
+            printf("set allm value:\n");
+            int value = 0;
+            len = scanf("%d", &value);
+            if (len == 1) {
+                if (setDisplayAllm( value, DISPLAY_CONNECTOR_HDMIA))
+                    printf("\n setDisplayAllm fail:\n");
+            } else {
+                    printf("\n scanf fail\n");
+            }
         }
     }
     else if(select_s == 1 && select_len == 1) {
@@ -357,7 +367,7 @@ int main()
          " 19->current aspect ratio 20->event test 21->frac rate policy 22->Supported dvmode 23->hdr supportedlist "
          " 24->DvCap 25->dpms status 26->mode support attrlist 27->framrate 28->primar plane fb size"
          " 29->physical size 30->Timing information 31->dv mode 32->rx supported hdcp version 33->cvbs video mute"
-         " 34->hdcp topo info 35->Rx supported hdr list\n");
+         " 34->hdcp topo info 35->Rx supported hdr list 36->allm 37->vrr_capable\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -641,6 +651,12 @@ int main()
                 printf("\n MESON_DRM_HDR_HLG\n");
             if (value & 0x40)
                 printf("\n MESON_DRM_SDR\n");
+        } else if (get == 36 && len == 1) {
+            int value = getDisplayAllm( DISPLAY_CONNECTOR_HDMIA);
+            printf("\n allm value: %d\n",value);
+        } else if (get == 37 && len == 1) {
+            int value = getDisplayVrrCapable( DISPLAY_CONNECTOR_HDMIA);
+            printf("\n VrrCapable value: %d\n",value);
         }
     }
     else {

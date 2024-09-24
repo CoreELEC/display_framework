@@ -136,6 +136,22 @@ uint32_t getDisplayColorDepth(DISPLAY_CONNECTOR_TYPE connType) {
     return value;
 }
 
+int getDisplayVrrCapable(DISPLAY_CONNECTOR_TYPE connType) {
+    int fd = display_meson_get_open();
+    int value = meson_drm_getVrrCapable(fd, connType);
+    meson_close_drm(fd);
+    DEBUG("%s %d get VrrCapable value: %d",__FUNCTION__,__LINE__,value);
+    return value;
+}
+
+int getDisplayAllm(DISPLAY_CONNECTOR_TYPE connType) {
+    int fd = display_meson_get_open();
+    int value = meson_drm_getAllm(fd, connType);
+    meson_close_drm(fd);
+    DEBUG("%s %d get allm value: %d",__FUNCTION__,__LINE__,value);
+    return value;
+}
+
 ENUM_DISPLAY_CONNECTION getDisplayConnectionStatus(DISPLAY_CONNECTOR_TYPE connType) {
     char* str = NULL;
     ENUM_DISPLAY_CONNECTION displayConnStatus = DISPLAY_UNKNOWNCONNECTION;

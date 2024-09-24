@@ -179,6 +179,10 @@ int setDisplayFracRatePolicy(int value, DISPLAY_CONNECTOR_TYPE connType);
 int setDisplayFracMode(DisplayModeInfo* modeInfo, int value, DISPLAY_CONNECTOR_TYPE connType);
 int getDisplayCvbsAVMute( );
 int setDisplayCvbsAVMute(bool mute);
+int setDisplayAllm(int value,DISPLAY_CONNECTOR_TYPE connType);
+int getDisplayAllm(DISPLAY_CONNECTOR_TYPE connType);
+int getDisplayVrrCapable(DISPLAY_CONNECTOR_TYPE connType);
+
 int getDisplayIsBestMode(int* value);
 int setDisplayBackGroundColor(unsigned char red, unsigned char green, unsigned char blue,
                                                              DISPLAY_CONNECTOR_TYPE connType);
