@@ -443,7 +443,7 @@ int setDisplayAutoMode(DISPLAY_CONNECTOR_TYPE connType) {
     req = drmModeAtomicAlloc();
     ret = meson_drm_getsupportedModesList(fd, &modes, &count, connType);
     if (ret) {
-        ERROR("%s %d get supported modeslist fail",ret, strerror(errno));
+        ERROR("%s %d get supported modeslist fail.", __FUNCTION__,__LINE__);
         goto out;
     }
     const char *env= getenv("MESON_DISPLAY_MAX_MODE");
@@ -732,7 +732,7 @@ int setDisplayVideoZorder(unsigned int index, unsigned int zorder, unsigned int 
     }
     ret = meson_drm_setVideoZorder( fd, index, zorder, flag);
     if (ret) {
-        ERROR("%s %d set video zorder Fail",ret, strerror(errno));
+        ERROR("%s %d set video  zorder fail.", __FUNCTION__,__LINE__);
     }
     meson_close_drm(fd);
     return ret;
