@@ -25,6 +25,31 @@
 #define DEFAULT_CARD "/dev/dri/card0"
 #include "libdrm_meson/meson_drm_log.h"
 
+#define MAX_RETRY 3
+#define WAIT_TIME_MS 30
+
+static bool ensureDrmMaster(int fd) {
+    int retries = 0;
+    DEBUG("%s %d master status %d \n",__FUNCTION__,__LINE__,drmIsMaster(fd));
+    while (retries < MAX_RETRY) {
+        if (drmIsMaster(fd)) {
+            DEBUG("%s %d already the master.\n",__FUNCTION__,__LINE__);
+            return true;
+        } else {
+            DEBUG("%s %d setting master attempt number %d\n",__FUNCTION__,__LINE__,retries + 1);
+            if (drmSetMaster(fd)) {
+                DEBUG("%s %d became the master\n",__FUNCTION__,__LINE__);
+                return true;
+            } else {
+                usleep(WAIT_TIME_MS * 1000);
+            }
+            retries++;
+        }
+    }
+    ERROR("%s %d failed to set the master after %d attempts. Exiting.\n",__FUNCTION__,__LINE__, MAX_RETRY);
+    return false;
+}
+
 int display_meson_set_open() {
     int fd = -1;
     int ret = -1;
@@ -97,6 +122,9 @@ int setDisplayAVMute(int mute, DISPLAY_CONNECTOR_TYPE connType) {
     res = meson_drm_setAVMute(fd, req, mute, connType);
     if (res == -1) {
         ERROR("%s %d set avmute fail",__FUNCTION__,__LINE__);
+        goto out;
+    }
+    if (!ensureDrmMaster(fd)) {
         goto out;
     }
     ret = drmModeAtomicCommit(fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
@@ -356,14 +384,11 @@ out:
     return  ret;
 }
 
-#define MAX_RETRY 3
-#define WAIT_TIME_MS 30
 int setDisplayMode(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType) {
     int res = -1;
     int ret = -1;
     int resNum = -1;
     int fd = 0;
-    int retries = 0;
     drmModeAtomicReq *req = NULL;
     DEBUG("%s %d set modeInfo %s %dx%d%s%dhz",__FUNCTION__,__LINE__, modeInfo->name, modeInfo->w,
            modeInfo->h, (modeInfo->interlace == 0? "p":"i") , modeInfo->vrefresh);
@@ -391,29 +416,14 @@ int setDisplayMode(DisplayModeInfo* modeInfo,DISPLAY_CONNECTOR_TYPE connType) {
                 ERROR("%s %d set hdmi dummy_l mode fail",__FUNCTION__,__LINE__);
                 goto out;
            }
-       }
-    }
-    DEBUG("%s %d master status %d \n",__FUNCTION__,__LINE__,drmIsMaster(fd));
-    while (retries < MAX_RETRY) {
-        if (drmIsMaster(fd)) {
-            DEBUG("%s %d already the master.\n",__FUNCTION__,__LINE__);
-            break;
         } else {
-            DEBUG("%s %d setting master attempt number %d\n",__FUNCTION__,__LINE__,retries + 1);
-            if (drmSetMaster(fd)) {
-                DEBUG("%s %d became the master\n",__FUNCTION__,__LINE__);
-                break;
-            } else {
-                usleep(WAIT_TIME_MS * 1000);
-            }
-            retries++;
+            ERROR("%s %d connector type is not DUMMY and setting failed,jumping to out",__FUNCTION__,__LINE__);
+            goto out;
         }
     }
-    if (retries == MAX_RETRY) {
-        ERROR("%s %d failed to set the master after %d attempts. Exiting.\n",__FUNCTION__,__LINE__, MAX_RETRY);
+    if (!ensureDrmMaster(fd)) {
         goto out;
     }
-    DEBUG("%s %d set the master status %d\n",__FUNCTION__,__LINE__,drmIsMaster(fd));
     ret = drmModeAtomicCommit(fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
     if (ret) {
         ERROR("%s %d drmModeAtomicCommit failed: ret %d errno %d", __FUNCTION__,__LINE__, ret, errno );
