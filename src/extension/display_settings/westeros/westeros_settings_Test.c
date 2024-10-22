@@ -283,7 +283,7 @@ int main()
          " 24->hdr supportedlist 25->DvCap 26->display enabled 27->dpms status 28->mode support attrlist 29->framrate"
          " 30->primar plane fb size 31->physical size 32->Timing information 33->is bestmode 34->dv mode "
          " 35->rx supported hdcp version 36->cvbs video mute 37->hdcp topo info 38->Rx supported hdr list"
-         " 39->allm 40->vrr_capable"
+         " 39->allm 40->vrr_capable\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
