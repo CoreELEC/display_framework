@@ -493,6 +493,42 @@ int getDisplayScaling(int* value) {
     return rc;
 }
 
+int setDisplayHdrPriority(int value) {
+    int ret = -1;
+    int rc = -1;
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+
+    snprintf(cmdBuf, sizeof(cmdBuf) - 1, "set hdr_priority %d", value);
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+        ret = 0;
+    } else {
+        ERROR("%s %d send message fail", __FUNCTION__, __LINE__);
+    }
+    return ret;
+}
+
+int getDisplayHdrPriority(int* value) {
+    char resp[CMDBUF_SIZE] = {'\0'};
+    char cmdBuf[CMDBUF_SIZE] = {'\0'};
+    int rc = -1;
+    if (value == NULL) {
+        ERROR("%s %d Error: pointers are NULL.\n",__FUNCTION__,__LINE__);
+        return rc;
+    }
+    snprintf(cmdBuf, sizeof(cmdBuf)-1, "get hdr_priority");
+    rc = wstDisplaySendMessage(cmdBuf,resp);
+    if (rc >= 0) {
+        if (sscanf(resp, "Response: [%*d:%*s %d]", value)) {
+          DEBUG("%s %d get hdr_priority %d", __FUNCTION__, __LINE__, *value);
+        }
+    } else {
+        ERROR("%s %d send message fail",__FUNCTION__,__LINE__);
+    }
+    return rc;
+}
+
 int getDisplayEnabled(int* enabled) {
     char resp[OUTPUT_SIZE] = {'\0'};
     char cmdBuf[CMDBUF_SIZE] = {'\0'};
