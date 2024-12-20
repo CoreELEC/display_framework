@@ -28,6 +28,8 @@ void display_event( ENUM_MESON_DISPLAY_EVENT enEvent, void *eventData/*Optional*
                "MESON_DISPLAY_EVENT_DISCONNECTED, //!< Display disconnected event.\n"
                "MESON_DISPLAY_HDCP_AUTHENTICATED,//!< HDCP authenticate success.\n"
                "MESON_DISPLAY_HDCP_AUTHENTICATIONFAILURE \n"
+               "MESON_DISPLAY_HDMITX_HDCPPWR_OFF,//!<  \n"
+               "MESON_DISPLAY_HDMITX_HDCPPWR_ON \n"
                "Eevent:%d\n",enEvent);
 }
 
