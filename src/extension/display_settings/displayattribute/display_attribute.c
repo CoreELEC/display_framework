@@ -79,11 +79,11 @@ ENUM_DISPLAY_HDCPAUTH_STATUS getDisplayHdcpAuthStatus(DISPLAY_CONNECTOR_TYPE con
 }
 
 void getDisplayEDIDData(DISPLAY_CONNECTOR_TYPE connType, int * data_Len, char **data ) {
-    int fd = display_meson_get_open();
     if (data_Len == NULL || data == NULL) {
         ERROR("%s %d invalid parameter return",__FUNCTION__,__LINE__);
         return;
     }
+    int fd = display_meson_get_open();
     meson_drm_getEDIDData(fd, connType, data_Len, data);
     DEBUG_EDID("\n");
     DEBUG("%s %d get data_Len: %d",__FUNCTION__,__LINE__, (*data_Len));
@@ -509,6 +509,7 @@ ENUM_DISPLAY_ASPECT_RATIO getDisplayAspectRatioValue(DISPLAY_CONNECTOR_TYPE conn
             displayAspectRatio = DISPLAY_ASPECT_RATIO_RESERVED;
             break;
     }
+    meson_close_drm(fd);
     DEBUG("%s %d get aspect ratio %s",__FUNCTION__,__LINE__,str);
     return displayAspectRatio;
 }
@@ -528,7 +529,6 @@ char* getDisplayModeSupportAttrList(char* modeName,DISPLAY_CONNECTOR_TYPE connTy
     bool hdrStatus = false;
     char color[5] = {'\0'};
     int supportedcheck = -1;
-    int fd = display_meson_get_open();
     ENUM_DISPLAY_HDR_MODE displayHdrMode = getDisplayHdrStatus(connType);
     if (displayHdrMode == MESON_DISPLAY_HDR10PLUS || displayHdrMode == MESON_DISPLAY_HDR10_ST2084 ||
                  displayHdrMode == MESON_DISPLAY_HDR10_TRADITIONAL ||displayHdrMode == MESON_DISPLAY_HDR_HLG) {
