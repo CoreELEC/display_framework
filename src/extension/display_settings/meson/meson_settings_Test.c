@@ -288,20 +288,7 @@ int main()
                 printf("\n setDisplayFunctionAttribute Fail \n");
             }
         } else if (set == 15 && len == 1) {
-            printf("\n please enter the parameters in order(index zorder flag): \n");
-            //<--index：Representing video index  Index 0 corresponds to modifying video 0;Index 1 corresponds to modifying video 1 -->//
-            //<--zpos：Represents the zorder value set-->//
-            //<--flag： Make the settings effective  Set flag equal to 1 to indicate effectiveness-->//
-            int zorder = 0;
-            int index = 0;
-            int flag = 0;
-            len = scanf("%d %d %d", &index,&zorder,&flag);
-            if (len == 3) {
-                if (setDisplayVideoZorder(index, zorder, flag))
-                    printf("\n setDisplayVideoZorder fail:\n");
-                } else {
-                    printf("\n \ scanf fail\n");
-                }
+            printf("\ncannot set video zorder.\n");
         } else if (set == 16 && len == 1) {
             printf("dvmode: \n");
             int dvmode = -1;

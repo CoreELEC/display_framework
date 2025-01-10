@@ -728,26 +728,6 @@ out:
     return  ret;
 }
 
-int setDisplayVideoZorder(unsigned int index, unsigned int zorder, unsigned int flag) {
-    int ret = -1;
-    int fd = -1;
-    DEBUG("%s %d set video zorder index:%d,zorder:%d,flag:%d",__FUNCTION__,__LINE__,index,zorder,flag);
-    fd = open(DEFAULT_CARD, O_RDWR|O_CLOEXEC);
-    if (fd < 0) {
-        ERROR("%s %d failed to open device %s",  __FUNCTION__,__LINE__,strerror(errno));
-    }
-    ret = drmSetClientCap(fd, DRM_CLIENT_CAP_ATOMIC, 1);
-    if (ret < 0) {
-        ERROR("%s %d no atomic modesetting support", __FUNCTION__,__LINE__);
-    }
-    ret = meson_drm_setVideoZorder( fd, index, zorder, flag);
-    if (ret) {
-        ERROR("%s %d set video  zorder fail.", __FUNCTION__,__LINE__);
-    }
-    meson_close_drm(fd);
-    return ret;
-}
-
 int setDisplayBackGroundColor(unsigned char red, unsigned char green, unsigned char blue,
                               DISPLAY_CONNECTOR_TYPE connType) {
     int res = -1;
