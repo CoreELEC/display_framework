@@ -48,7 +48,7 @@ int main()
         printf("set:0->hdmi mode 1->cvbs mode 2->hdr policy 3->av mute 4->HDMI HDCP enable 5-><colorDepth, colorSpace>"
         "6->HDCP Content Type  7->DvEnable 8->active 9->vrr Enable 10->auto mode 11->dummy mode 12->aspect ratio"
         " 13->scaling 14->the status of display 15->dv mode 16->cvbs video mute 17->frac rate policy 18->fracmode"
-        " 19->allm 20->hdr_priority\n");
+        " 19->allm 20->hdr_priority 21->auto-frm-mode\n");
         len = scanf("%d",&set);
         if (set == 0 && len == 1) {
             printf("please input modeInfo:interlace, w, h, vrefresh\n");
@@ -284,6 +284,15 @@ int main()
           } else {
             printf("setDisplayHdrPriority Fail\n");
           }
+        } else if (set == 21 && len == 1) {
+            printf("set auto-frm-mode: \n");
+            int value = -1;
+            scanf("%d", &value);
+            if (setDisplayAutoFrmMode(value) == 0) {
+                printf("\n setDisplayAutoFrmMode Success\n");
+            } else {
+                printf("setDisplayAutoFrmMode Fail\n");
+            }
         }
     }
     else if(select_s == 1 && select_len == 1) {
@@ -294,7 +303,7 @@ int main()
          " 24->hdr supportedlist 25->DvCap 26->display enabled 27->dpms status 28->mode support attrlist 29->framrate"
          " 30->primar plane fb size 31->physical size 32->Timing information 33->is bestmode 34->dv mode "
          " 35->rx supported hdcp version 36->cvbs video mute 37->hdcp topo info 38->Rx supported hdr list"
-         " 39->allm 40->vrr_capable 41->hdr_priority\n");
+         " 39->allm 40->vrr_capable 41->hdr_priority 42->auto-frm-mode\n");
         len = scanf("%d",&get);
         if (get == 0 && len == 1) {
             ENUM_DISPLAY_HDR_POLICY value = getDisplayHDRPolicy( DISPLAY_CONNECTOR_HDMIA);
@@ -621,6 +630,13 @@ int main()
                 printf("send message fail, cause get the status of display fail\n");
             } else {
                 printf("get hdr_priority value %d\n",enabled);
+            }
+        } else if (get == 42 && len == 1) {
+            int value = 0;
+            if (getDisplayAutoFrmMode(&value) < 0) {
+               printf("\n send message fail, cause get get auto-frm-mode fail\n");
+            } else {
+               printf("\n get auto-frm-mode %d\n",value);
             }
         }
     }
