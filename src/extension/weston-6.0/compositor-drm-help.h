@@ -106,6 +106,8 @@ void help_switch_compositor_output(struct compositor_output* output, bool enable
 
 typedef void (*print_info)(struct weston_compositor* ec, int count);
 void help_set_printinfo_function(struct weston_compositor* ec , print_info fun);
+
+bool parse_modestring(const char* modestring, drm_helper_mode* mode);
 #ifdef __cplusplus
 }
 #endif

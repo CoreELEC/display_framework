@@ -198,6 +198,9 @@ int getDisplayHdrPriority(int* value);
 int display_meson_get_open();
 int display_meson_set_open();
 
+int setDisplayDummyMode(DISPLAY_CONNECTOR_TYPE connType);
+ENUM_DISPLAY_HDCP_Content_Type getDisplayHDCPContentType(DISPLAY_CONNECTOR_TYPE connType);
+
 bool modeAttrSupportedCheck(char* modeName, ENUM_DISPLAY_COLOR_SPACE colorSpace,
                           uint32_t colorDepth, DISPLAY_CONNECTOR_TYPE connType );
 

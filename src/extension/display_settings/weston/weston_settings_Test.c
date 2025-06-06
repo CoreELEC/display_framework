@@ -576,7 +576,7 @@ int main()
                }
            }
         } else if (get == 33 && len == 1) {
-            int value = getDisplayCvbsAVMute( DISPLAY_CONNECTOR_CVBS );
+            int value = getDisplayCvbsAVMute( );
             printf("\n cvbs video mute:%d\n",value);
         } else if (get == 34 && len == 1) {
             int value = getDisplayFracRatePolicy( DISPLAY_CONNECTOR_HDMIA );

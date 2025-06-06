@@ -25,7 +25,7 @@
 #include "libdrm_meson/meson_drm_event.h"
 #define DEFAULT_CARD "/dev/dri/card0"
 #include "libdrm_meson/meson_drm_log.h"
-#include "linux/amlogic/drm/meson_drm.h"
+#include "libdrm_meson/meson_drm.h"
 
 #define MESON_DISPLAY_DV_MODE_FLAG 0xf8
 

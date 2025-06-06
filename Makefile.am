@@ -1,4 +1,3 @@
-ACLOCAL_AMFLAGS = -I m4
 SUBDIRS =
 if ENABLE_DRM_FUNCTION
 SUBDIRS += src/extension/drm

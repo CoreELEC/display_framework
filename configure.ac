@@ -22,7 +22,6 @@ AC_CONFIG_FILES([
 AM_PROG_AR
 AC_PROG_LIBTOOL
 LT_INIT()
-AC_CONFIG_MACRO_DIR([m4])
 PKG_PROG_PKG_CONFIG()
 AC_CHECK_LIB(json-c, json_tokener_parse,
 			 have_json_c=yes, have_json_c=no)
